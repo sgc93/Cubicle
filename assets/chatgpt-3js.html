@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced 3D Editor</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- Load OrbitControls for navigation -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    <!-- Load TransformControls for object manipulation -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/TransformControls.js"></script>
+
+    <style>
+        /* Custom styles for the 3D container */
+        #container {
+            width: 100%;
+            height: 100%;
+            border-radius: 0.75rem; /* rounded-xl */
+            overflow: hidden;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* shadow-xl */
+        }
+        /* Style for the buttons and inputs */
+        .control-group button {
+            transition: all 0.15s ease-in-out;
+        }
+        .control-group button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .control-group input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            background: #cbd5e1; /* slate-300 */
+            border-radius: 4px;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+        }
+        .control-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #3b82f6; /* blue-500 */
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 sm:p-8 flex justify-center items-center font-sans">
+    <div class="w-full max-w-7xl h-[90vh] flex flex-col lg:flex-row bg-white rounded-xl shadow-2xl overflow-hidden">
+
+        <!-- 3D Viewport Container -->
+        <div id="container" class="lg:w-3/4 h-2/3 lg:h-full bg-gray-900">
+            <!-- Three.js will inject the canvas here -->
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="lg:w-1/4 h-1/3 lg:h-full p-4 overflow-y-auto space-y-4">
+            <h2 class="text-xl font-bold text-gray-800 border-b pb-2 mb-2">3D Editor Controls</h2>
+
+            <!-- Object Transform Controls -->
+            <div class="control-group border-b pb-4">
+                <h3 class="font-semibold text-blue-600 mb-2">Object Manipulation</h3>
+                <div class="flex space-x-2">
+                    <button id="translate-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-3 rounded-lg text-sm">Translate</button>
+                    <button id="rotate-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-3 rounded-lg text-sm">Rotate</button>
+                    <button id="scale-btn" class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-700 font-medium py-2 px-3 rounded-lg text-sm">Scale</button>
+                </div>
+            </div>
+            
+            <!-- Advanced Geometry Editing (Simplified) -->
+            <div class="control-group border-b pb-4">
+                <h3 class="font-semibold text-red-600 mb-2">Advanced Geometry (WIP)</h3>
+                <p class="text-xs text-gray-500 mb-2">Toggle vertex handles for visualization. Full vertex manipulation requires complex raycasting logic.</p>
+                <button id="toggle-vertices-btn" class="w-full bg-red-100 hover:bg-red-200 text-red-700 font-medium py-2 px-3 rounded-lg text-sm">Show Vertices</button>
+            </div>
+
+            <!-- Camera Customization & Presets -->
+            <div class="control-group border-b pb-4 space-y-3">
+                <h3 class="font-semibold text-green-600 mb-2">Camera Settings</h3>
+                <div class="space-y-1">
+                    <label for="fov-input" class="text-xs text-gray-600 block">FOV (Field of View): <span id="fov-value">75</span>°</label>
+                    <input type="range" id="fov-input" min="10" max="120" value="75" step="1">
+                </div>
+                <div class="space-y-1">
+                    <label for="near-input" class="text-xs text-gray-600 block">Near Plane: <span id="near-value">0.1</span></label>
+                    <input type="range" id="near-input" min="0.1" max="10" value="0.1" step="0.1">
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button id="save-cam-btn" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-2 px-3 rounded-lg text-sm">Save Preset</button>
+                    <button id="load-cam-btn" class="flex-1 bg-green-100 hover:bg-green-200 text-green-700 font-medium py-2 px-3 rounded-lg text-sm">Load Preset</button>
+                </div>
+                <p id="cam-preset-status" class="text-xs text-center text-gray-500 h-4"></p>
+            </div>
+            
+            <!-- Lighting Editing -->
+            <div class="control-group border-b pb-4 space-y-3">
+                <h3 class="font-semibold text-yellow-600 mb-2">Lighting Editor (Directional Light)</h3>
+                <div class="space-y-1">
+                    <label for="light-color-input" class="text-xs text-gray-600 block">Light Color:</label>
+                    <input type="color" id="light-color-input" value="#ffffff" class="w-full h-10 rounded-lg border-2 border-gray-300 p-0">
+                </div>
+                <div class="space-y-1">
+                    <label for="light-intensity-input" class="text-xs text-gray-600 block">Intensity: <span id="light-intensity-value">1.00</span></label>
+                    <input type="range" id="light-intensity-input" min="0" max="5" value="1" step="0.05">
+                </div>
+            </div>
+
+            <!-- Texture/Material Editing -->
+            <div class="control-group space-y-3">
+                <h3 class="font-semibold text-purple-600 mb-2">Material Editor</h3>
+                <div class="space-y-1">
+                    <label for="material-color-input" class="text-xs text-gray-600 block">Base Color:</label>
+                    <input type="color" id="material-color-input" value="#1e40af" class="w-full h-10 rounded-lg border-2 border-gray-300 p-0">
+                </div>
+                <div class="space-y-1">
+                    <label for="roughness-input" class="text-xs text-gray-600 block">Roughness: <span id="roughness-value">0.40</span></label>
+                    <input type="range" id="roughness-input" min="0" max="1" value="0.4" step="0.05">
+                </div>
+                <div class="space-y-1">
+                    <label for="metalness-input" class="text-xs text-gray-600 block">Metalness: <span id="metalness-value">0.10</span></label>
+                    <input type="range" id="metalness-input" min="0" max="1" value="0.1" step="0.05">
+                </div>
+                <div class="flex items-center mt-2">
+                    <input type="checkbox" id="texture-toggle" class="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded">
+                    <label for="texture-toggle" class="ml-2 block text-sm font-medium text-gray-700">Use Placeholder Texture</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        // --- Core Three.js Setup ---
+        let scene, camera, renderer, controls, transformControls;
+        let mesh;
+        let directionalLight;
+        const container = document.getElementById('container');
+        let vertexHelperGroup;
+
+        // Placeholder for saved camera preset
+        let savedCameraPreset = null;
+
+        function init() {
+            // 1. Scene setup
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0x282c34); // Dark background
+
+            // 2. Camera setup
+            camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(5, 5, 5);
+
+            // 3. Renderer setup
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+
+            // 4. Lighting setup
+            directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+            directionalLight.position.set(10, 10, 5);
+            scene.add(directionalLight);
+            scene.add(new THREE.AmbientLight(0x404040)); // Soft ambient light
+
+            // 5. Default Mesh (Editable Object)
+            const geometry = new THREE.BoxGeometry(2, 2, 2, 2, 2, 2);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0x1e40af, // blue-800
+                roughness: 0.4,
+                metalness: 0.1
+            });
+            mesh = new THREE.Mesh(geometry, material);
+            scene.add(mesh);
+
+            // 6. Controls setup (OrbitControls for camera movement)
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true; // smooth camera movement
+            controls.dampingFactor = 0.05;
+
+            // 7. TransformControls (for object manipulation)
+            transformControls = new THREE.TransformControls(camera, renderer.domElement);
+            transformControls.attach(mesh);
+            scene.add(transformControls);
+            
+            // Listeners to prevent OrbitControls conflict during transformation
+            transformControls.addEventListener('dragging-changed', function (event) {
+                controls.enabled = !event.value;
+            });
+
+            // 8. Vertex Helper Group
+            vertexHelperGroup = new THREE.Group();
+            scene.add(vertexHelperGroup);
+
+
+            // 9. Event Listeners
+            setupEventListeners();
+            window.addEventListener('resize', onWindowResize, false);
+            
+            // Initial call to set UI values
+            updateUIFromScene();
+
+            // Start animation loop
+            animate();
+        }
+
+        function onWindowResize() {
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // only required if controls.enableDamping is set to true
+            renderer.render(scene, camera);
+        }
+
+        // --- Feature Implementations ---
+
+        // =========================================================================
+        // 1. Object Transformation (Translate/Rotate/Scale)
+        // =========================================================================
+        document.getElementById('translate-btn').addEventListener('click', () => transformControls.setMode('translate'));
+        document.getElementById('rotate-btn').addEventListener('click', () => transformControls.setMode('rotate'));
+        document.getElementById('scale-btn').addEventListener('click', () => transformControls.setMode('scale'));
+        
+        // =========================================================================
+        // 2. Advanced Geometry Editing (Simplified Vertex Handles)
+        // =========================================================================
+        function createVertexHandles() {
+            vertexHelperGroup.clear();
+            const positions = mesh.geometry.attributes.position.array;
+            const vertexCount = positions.length / 3;
+            
+            const handleGeometry = new THREE.SphereGeometry(0.05, 8, 8);
+            const handleMaterial = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+
+            for (let i = 0; i < vertexCount; i++) {
+                const x = positions[i * 3];
+                const y = positions[i * 3 + 1];
+                const z = positions[i * 3 + 2];
+                
+                const handle = new THREE.Mesh(handleGeometry, handleMaterial);
+                handle.position.set(x, y, z);
+                handle.userData.vertexIndex = i; // Store index for later manipulation
+                
+                // Position the handle in world space based on the mesh's current transform
+                handle.position.applyMatrix4(mesh.matrixWorld);
+
+                vertexHelperGroup.add(handle);
+            }
+            vertexHelperGroup.visible = true;
+        }
+
+        function toggleVertexHandles() {
+            if (vertexHelperGroup.visible) {
+                vertexHelperGroup.visible = false;
+                document.getElementById('toggle-vertices-btn').textContent = "Show Vertices";
+                document.getElementById('toggle-vertices-btn').classList.remove('bg-red-500', 'text-white');
+                document.getElementById('toggle-vertices-btn').classList.add('bg-red-100', 'text-red-700');
+
+            } else {
+                createVertexHandles();
+                vertexHelperGroup.visible = true;
+                document.getElementById('toggle-vertices-btn').textContent = "Hide Vertices (Mode Active)";
+                document.getElementById('toggle-vertices-btn').classList.remove('bg-red-100', 'text-red-700');
+                document.getElementById('toggle-vertices-btn').classList.add('bg-red-500', 'text-white');
+            }
+        }
+        document.getElementById('toggle-vertices-btn').addEventListener('click', toggleVertexHandles);
+
+
+        // =========================================================================
+        // 3. Camera Customization & Presets
+        // =========================================================================
+
+        function updateCameraFromUI() {
+            const fov = parseFloat(document.getElementById('fov-input').value);
+            const near = parseFloat(document.getElementById('near-input').value);
+            
+            camera.fov = fov;
+            camera.near = near;
+            camera.updateProjectionMatrix();
+
+            document.getElementById('fov-value').textContent = fov.toFixed(0);
+            document.getElementById('near-value').textContent = near.toFixed(1);
+        }
+
+        function saveCameraPreset() {
+            savedCameraPreset = {
+                position: camera.position.clone(),
+                target: controls.target.clone(),
+                fov: camera.fov,
+                near: camera.near,
+                // Far plane is optional but good practice
+            };
+            const status = document.getElementById('cam-preset-status');
+            status.textContent = 'Camera preset saved!';
+            setTimeout(() => status.textContent = '', 2000);
+        }
+
+        function loadCameraPreset() {
+            const status = document.getElementById('cam-preset-status');
+            if (savedCameraPreset) {
+                camera.position.copy(savedCameraPreset.position);
+                controls.target.copy(savedCameraPreset.target);
+                camera.fov = savedCameraPreset.fov;
+                camera.near = savedCameraPreset.near;
+                camera.updateProjectionMatrix();
+                controls.update(); // Update controls to reflect new target
+
+                // Update UI inputs
+                document.getElementById('fov-input').value = savedCameraPreset.fov;
+                document.getElementById('near-input').value = savedCameraPreset.near;
+                updateCameraFromUI();
+
+                status.textContent = 'Camera preset loaded!';
+            } else {
+                status.textContent = 'No preset saved yet!';
+            }
+            setTimeout(() => status.textContent = '', 2000);
+        }
+
+        document.getElementById('fov-input').addEventListener('input', updateCameraFromUI);
+        document.getElementById('near-input').addEventListener('input', updateCameraFromUI);
+        document.getElementById('save-cam-btn').addEventListener('click', saveCameraPreset);
+        document.getElementById('load-cam-btn').addEventListener('click', loadCameraPreset);
+
+
+        // =========================================================================
+        // 4. Lighting Editing
+        // =========================================================================
+        function updateLighting() {
+            const colorValue = document.getElementById('light-color-input').value;
+            const intensityValue = parseFloat(document.getElementById('light-intensity-input').value);
+
+            directionalLight.color.set(colorValue);
+            directionalLight.intensity = intensityValue;
+
+            document.getElementById('light-intensity-value').textContent = intensityValue.toFixed(2);
+        }
+
+        document.getElementById('light-color-input').addEventListener('input', updateLighting);
+        document.getElementById('light-intensity-input').addEventListener('input', updateLighting);
+
+
+        // =========================================================================
+        // 5. Texture/Material Editing
+        // =========================================================================
+
+        // Placeholder Texture (simple 2x2 texture)
+        const placeholderTexture = new THREE.DataTexture(
+            new Uint8Array([
+                255, 0, 0, 255,   // Red
+                0, 255, 0, 255,   // Green
+                0, 0, 255, 255,   // Blue
+                255, 255, 0, 255   // Yellow
+            ]),
+            2, 2,
+            THREE.RGBAFormat
+        );
+        placeholderTexture.needsUpdate = true;
+        placeholderTexture.wrapS = THREE.RepeatWrapping;
+        placeholderTexture.wrapT = THREE.RepeatWrapping;
+        placeholderTexture.repeat.set(2, 2);
+
+        function updateMaterial() {
+            const material = mesh.material;
+            const colorValue = document.getElementById('material-color-input').value;
+            const roughnessValue = parseFloat(document.getElementById('roughness-input').value);
+            const metalnessValue = parseFloat(document.getElementById('metalness-input').value);
+            const useTexture = document.getElementById('texture-toggle').checked;
+
+            material.color.set(colorValue);
+            material.roughness = roughnessValue;
+            material.metalness = metalnessValue;
+            material.map = useTexture ? placeholderTexture : null;
+            material.needsUpdate = true;
+            
+            document.getElementById('roughness-value').textContent = roughnessValue.toFixed(2);
+            document.getElementById('metalness-value').textContent = metalnessValue.toFixed(2);
+        }
+
+        function setupEventListeners() {
+            // Material listeners
+            document.getElementById('material-color-input').addEventListener('input', updateMaterial);
+            document.getElementById('roughness-input').addEventListener('input', updateMaterial);
+            document.getElementById('metalness-input').addEventListener('input', updateMaterial);
+            document.getElementById('texture-toggle').addEventListener('change', updateMaterial);
+        }
+        
+        // Function to set initial UI values from scene state
+        function updateUIFromScene() {
+            // Camera
+            document.getElementById('fov-input').value = camera.fov;
+            document.getElementById('near-input').value = camera.near;
+            updateCameraFromUI();
+
+            // Lighting
+            document.getElementById('light-color-input').value = '#' + directionalLight.color.getHexString();
+            document.getElementById('light-intensity-input').value = directionalLight.intensity;
+            updateLighting();
+
+            // Material
+            document.getElementById('material-color-input').value = '#' + mesh.material.color.getHexString();
+            document.getElementById('roughness-input').value = mesh.material.roughness;
+            document.getElementById('metalness-input').value = mesh.material.metalness;
+            updateMaterial();
+        }
+
+        // Initialize the application once the window loads
+        window.onload = init;
+    </script>
+</body>
+</html>
