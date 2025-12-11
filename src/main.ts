@@ -1,6 +1,6 @@
-import { buildScene } from "./components/scene";
 import { handleSidebar } from "./components/sidebar";
 import "./style.css";
 
-buildScene();
+import "./components/scene";
+
 handleSidebar("Sidebar is handled");
