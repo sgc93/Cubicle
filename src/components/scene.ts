@@ -21,11 +21,9 @@ let mesh: THREE.Mesh | null = null;
 const INIFINITE_GRID_SIZE = 2000;
 const CAMERA_FAR_PLANE = INIFINITE_GRID_SIZE + 5000;
 const initScene = () => {
-  // --- SCENE ---
+  // --- SCENE | CAMERA | RENDERE---
   scene = new THREE.Scene();
   scene.background = new THREE.Color("#424342");
-
-  // --- CAMERA ---
   camera = new THREE.PerspectiveCamera(
     75,
     canvas.clientWidth / canvas.clientHeight,
@@ -42,17 +40,17 @@ const initScene = () => {
   renderer.setSize(canvas.clientWidth, canvas.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
-  // --- CONTROLS (Camera) ---
+  // --- CONTROLS ---
   controls = new OrbitControls(camera, renderer.domElement);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
 
-  // --- GRID + AXES ---
+  // --- HELPERS: GRID, AXES ---
   const grid = new THREE.GridHelper(
     INIFINITE_GRID_SIZE,
     1000,
-    "#4d4d4d",
-    "#2e2e2e"
+    "#6d6d6d",
+    "#4d4d4d"
   );
   const axes = new THREE.AxesHelper(3);
   axes.setColors("#facc15", "#0466c8", "#25a244");
@@ -65,11 +63,17 @@ const initScene = () => {
 
   // --- TRANSFORM CONTROLS (Object Manipulation) ---
   transformControls = new TransformControls(camera, renderer.domElement);
-  scene.add(transformControls as unknown as THREE.Object3D);
-
   transformControls.addEventListener("dragging-changed", (event) => {
     controls.enabled = !event.value;
+
+    // FIXME update sidebar when drag ends
   });
+  transformControls.addEventListener("change", () => {
+    if (transformControls.dragging) {
+      // FIXME update without refreshing all dimensions
+    }
+  });
+  scene.add(transformControls as unknown as THREE.Object3D);
 
   // --- RESIZE HANDLER ---
   window.addEventListener("resize", () => {
@@ -114,8 +118,6 @@ const addNewObject = () => {
 
   // Attach controls to the new mesh
   transformControls.attach(mesh);
-
-  // new object add
 };
 
 if (canvas) {
