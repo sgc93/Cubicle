@@ -3,12 +3,12 @@
 @theme {
   --color-n-50: #ffffff;
   --color-n-100: #e5e5e5;
-  --color-n-300: #6B6C6E;
+  --color-n-300: #6b6c6e;
   --color-n-400: #8a8a8a;
-  --color-n-500: #7D7D7D;
+  --color-n-500: #7d7d7d;
   --color-n-600: #424342;
-  --color-n-700: #2D2D2D;
-  --color-n-800: #2A2B2A;
+  --color-n-700: #2d2d2d;
+  --color-n-800: #2a2b2a;
   --color-n-900: #1f1f1f;
 
   --color-accent-1: #f77f00;
@@ -29,7 +29,7 @@ body {
 
 /* scroll bar */
 
-.cubic-scroll::-webkit-scrollbar{
+.cubic-scroll::-webkit-scrollbar {
   background-color: var(--color-n-600) 60%;
   border-left: 1px solid var(--color-n-600);
   width: 12px;
@@ -37,4 +37,9 @@ body {
 
 .cubic-scroll::-webkit-scrollbar-thumb {
   background-color: var(--color-n-600);
+}
+
+.cubic-scroll::-webkit-scrollbar-corner {
+  background-color: var(--color-n-600) 60%;
+  border-left: 1px solid var(--color-n-600);
 }
