@@ -1,13 +1,23 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="/icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>my-3d-editor</title>
+    <title>3d Editor</title>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" class="flex flex-col w-screen h-screen">
+      <div class="flex bg-n-800 px-3 py-2 border-b border-n-300 text-accent-1">
+        <img src="./logo.png" class="w-18"/>
+      </div>
+      <div class="flex-1 flex">
+        <div id="container" class="flex-1 flex bg-n-600"></div>
+        <div id="sidebar" class=" w-80 bg-n-600/60 p-5">
+          sidebar
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
