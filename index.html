@@ -88,26 +88,168 @@
             </button>
           </div>
         </div>
-        <div id="sidebar" class="w-80 flex flex-col gap-1.5 bg-n-600/60 p-1.5 overflow-scroll cubic-scroll">
+        <div
+          id="sidebar"
+          class="w-80 flex flex-col gap-1.5 bg-n-600/60 p-1.5 overflow-scroll cubic-scroll"
+        >
           <div class="bg-n-800 rounded-md flex flex-col gap-2 py-1.5">
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-          </div>
-          <div class="bg-n-800 rounded-md flex flex-col gap-2">
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-          </div>
-          <div class="bg-n-800 rounded-md flex flex-col gap-2">
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-          </div>
-          <div class="bg-n-800 rounded-md flex flex-col gap-2">
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
-            <div class="bg-n-700"><span>Scene Collection</span></div>
+            <button
+              class="group flex items-center gap-1.5 bg-n-700 px-2 py-1 cursor-pointer"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="w-5 h-5 stroke-n-100 transition-all duration-300 group-hover:stroke-n-50 group-hover:scale-105"
+              >
+                <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <path d="M6 10l6 6l6 -6h-12" />
+              </svg>
+              <span
+                class="text-n-100 transition-all duration-300 translate-x-0 hover:text-n-50 hover:translate-x-1"
+                >Scene Collection</span
+              >
+            </button>
+            <div class="flex flex-col gap-1.5 ml-5 pl-2 pr-2 border-l border-n-400/60">
+              <div class="group flex items-center gap-3 justify-between px-1 py-0.5 transition-all duration-300 hover:bg-n-600 rounded-sm">
+                <button class="flex items-center gap-2 cursor-pointer">
+                  <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                class="w-3.5 h-3.5 stroke-n-100 transition-all duration-300 group-hover:stroke-accent-1"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M21 16.008v-8.018a1.98 1.98 0 0 0 -1 -1.717l-7 -4.008a2.016 2.016 0 0 0 -2 0l-7 4.008c-.619 .355 -1 1.01 -1 1.718v8.018c0 .709 .381 1.363 1 1.717l7 4.008a2.016 2.016 0 0 0 2 0l7 -4.008c.619 -.355 1 -1.01 1 -1.718z"
+                  />
+                  <path d="M12 22v-10" />
+                  <path d="M12 12l8.73 -5.04" />
+                  <path d="M3.27 6.96l8.73 5.04" />
+                </svg>
+
+                <span class="text-n-100 text-sm transition-all duration-300 group-hover:text-accent-1">Cube</span>
+                </button>
+                <button class="group cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                class="w-3.5 h-3.5 stroke-accent-1 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M18 6l-12 12" />
+                    <path d="M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div class="group flex items-center gap-3 justify-between px-1 py-0.5 transition-all duration-300 hover:bg-n-600 rounded-sm">
+                <button class="flex items-center gap-2 cursor-pointer">
+                  <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                class="w-3.5 h-3.5 stroke-n-100 transition-all duration-300 group-hover:stroke-accent-1"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M21 16.008v-8.018a1.98 1.98 0 0 0 -1 -1.717l-7 -4.008a2.016 2.016 0 0 0 -2 0l-7 4.008c-.619 .355 -1 1.01 -1 1.718v8.018c0 .709 .381 1.363 1 1.717l7 4.008a2.016 2.016 0 0 0 2 0l7 -4.008c.619 -.355 1 -1.01 1 -1.718z"
+                  />
+                  <path d="M12 22v-10" />
+                  <path d="M12 12l8.73 -5.04" />
+                  <path d="M3.27 6.96l8.73 5.04" />
+                </svg>
+
+                <span class="text-n-100 text-sm transition-all duration-300 group-hover:text-accent-1">Cube</span>
+                </button>
+                <button class="group cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                class="w-3.5 h-3.5 stroke-accent-1 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M18 6l-12 12" />
+                    <path d="M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div class="group flex items-center gap-3 justify-between px-1 py-0.5 transition-all duration-300 hover:bg-n-600 rounded-sm">
+                <button class="flex items-center gap-2 cursor-pointer">
+                  <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                class="w-3.5 h-3.5 stroke-n-100 transition-all duration-300 group-hover:stroke-accent-1"
+                >
+                  <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                  <path
+                    d="M21 16.008v-8.018a1.98 1.98 0 0 0 -1 -1.717l-7 -4.008a2.016 2.016 0 0 0 -2 0l-7 4.008c-.619 .355 -1 1.01 -1 1.718v8.018c0 .709 .381 1.363 1 1.717l7 4.008a2.016 2.016 0 0 0 2 0l7 -4.008c.619 -.355 1 -1.01 1 -1.718z"
+                  />
+                  <path d="M12 22v-10" />
+                  <path d="M12 12l8.73 -5.04" />
+                  <path d="M3.27 6.96l8.73 5.04" />
+                </svg>
+
+                <span class="text-n-100 text-sm transition-all duration-300 group-hover:text-accent-1">Cube</span>
+                </button>
+                <button class="group cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                class="w-3.5 h-3.5 stroke-accent-1 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                  >
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M18 6l-12 12" />
+                    <path d="M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
