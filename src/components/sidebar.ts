@@ -225,4 +225,37 @@ const setupInputListeners = () => {
   updateMeshProperty("scale", "z", inputs.scale.z);
 };
 
+let isSidebarOpen: boolean = true;
+
+const toggleBtnClick = () => {
+  const toggleBtn = document.getElementById(
+    "toggle-sidebar-btn"
+  ) as HTMLButtonElement;
+  const sidebar = document.getElementById("sidebar") as HTMLDivElement;
+  const sidebarIcon = document.getElementById("sidebar-icon") as HTMLElement;
+
+  toggleBtn.addEventListener("click", () => {
+    if (sidebar && toggleBtn && sidebarIcon) {
+      if (isSidebarOpen) {
+        sidebar.classList.remove("sidebar-flex");
+        sidebar.classList.add("sidebar-hidden");
+
+        toggleBtn.classList.remove("bg-accent-1/80");
+        sidebarIcon.classList.add("rotate-y-180");
+
+        isSidebarOpen = false;
+      } else {
+        sidebar.classList.remove("sidebar-hidden");
+        sidebar.classList.add("sidebar-flex");
+
+        toggleBtn.classList.add("bg-accent-1/80");
+        sidebarIcon.classList.remove("rotate-y-180");
+
+        isSidebarOpen = true;
+      }
+    }
+  });
+};
+
 setupInputListeners();
+toggleBtnClick();
