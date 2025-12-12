@@ -27,9 +27,6 @@ body {
   padding: 0;
 }
 
-.container {
-  height: calc(100dvh - 200px);
-}
 
 /* scroll bar */
 .cubic-scroll{
