@@ -3,6 +3,7 @@ import { displayOpenObjects, displaySelectedOjbect } from "./sidebar";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type {
+  ExportedObject,
   ObjectModeType,
   ObjectType,
   SceneObject
@@ -132,6 +133,85 @@ const animate = () => {
 
   controls.update();
   renderer.render(scene, camera);
+};
+
+export const updateSceneObjects = (objects: ExportedObject[]) => {
+  objects.forEach((obj, index) => {
+    let geometry: THREE.BufferGeometry;
+    let newMesh: THREE.Mesh;
+
+    switch (obj.type) {
+      case "box":
+      case "mesh":
+        geometry = new THREE.BoxGeometry(2, 2, 2);
+        break;
+      case "plane":
+        geometry = new THREE.PlaneGeometry(10, 10);
+        break;
+      case "sphere":
+        geometry = new THREE.SphereGeometry(1.5, 32, 16);
+        break;
+      case "cylinder":
+        geometry = new THREE.CylinderGeometry(1, 1, 3, 32);
+        break;
+      case "cone":
+        geometry = new THREE.ConeGeometry(1.5, 3, 32);
+        break;
+      case "torus":
+        geometry = new THREE.TorusGeometry(2, 0.5, 16, 100);
+        break;
+      case "text": // FIXEME handle displaying text
+        geometry = new THREE.BoxGeometry(2, 2, 0.2);
+        break;
+      default:
+        return;
+    }
+
+    const material = createDefaultMaterial();
+    newMesh = new THREE.Mesh(geometry, material);
+
+    newMesh.position.set(obj.position.x, obj.position.y, obj.position.z);
+    newMesh.rotation.set(obj.rotation.x, obj.rotation.y, obj.rotation.z);
+    newMesh.scale.set(obj.scale.x, obj.scale.y, obj.scale.z);
+
+    newMesh.castShadow = true;
+    newMesh.receiveShadow = true;
+    newMesh.name = obj.name;
+
+    scene.add(newMesh);
+
+    const newSceneObj: SceneObject = {
+      id: obj.id,
+      type: obj.type,
+      name: obj.name,
+      mesh: newMesh,
+      mode: "translate"
+    };
+
+    sceneObjects.push(newSceneObj);
+    if (index === objects.length) {
+      selectedObject = newSceneObj;
+      selectObject(newSceneObj.id);
+    }
+  });
+};
+export const clearScene = () => {
+  for (const obj of sceneObjects) {
+    scene.remove(obj.mesh);
+    obj.mesh.geometry.dispose();
+    (obj.mesh.material as THREE.Material).dispose();
+  }
+
+  if (boundingBoxHelper) scene.remove(boundingBoxHelper);
+  boundingBoxHelper = null;
+  transformControls.detach();
+
+  sceneObjects = [];
+  selectedObject = null;
+  typeCounter = {};
+
+  displaySelectedOjbect(null);
+  displayOpenObjects([], null);
 };
 
 function onPointerClick(event: PointerEvent) {
