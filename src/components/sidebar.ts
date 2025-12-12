@@ -1,4 +1,4 @@
-import type { SceneObject } from "../types/SceneTypes";
+import type { ObjectModeType, SceneObject } from "../types/SceneTypes";
 import { getSvg } from "../utils/getSvg";
 
 const createListObjectHTML = (object: SceneObject, isSelected: boolean) => {
@@ -102,5 +102,48 @@ export const displayOpenObjects = (
 };
 
 export const displaySelectedOjbect = (object: SceneObject | null) => {
-  console.log(object);
+  const nameBox = document.getElementById(
+    "selected-object-name"
+  ) as HTMLSpanElement | null;
+  const iconBox = document.getElementById(
+    "selected-object-svg"
+  ) as HTMLDivElement | null;
+  const customBoxOverlay = document.getElementById(
+    "customize-box-overlay"
+  ) as HTMLDivElement | null;
+
+  const parser = new DOMParser();
+
+  if (object) {
+    if (customBoxOverlay) {
+      customBoxOverlay.classList.add("hidden");
+      customBoxOverlay.classList.remove("flex");
+    }
+    // title
+    if (nameBox) {
+      nameBox.innerHTML = object?.name ?? "";
+    }
+    if (iconBox) {
+      const doc = parser.parseFromString(
+        getSvg(object?.type || "box", false),
+        "text/html"
+      );
+      const itemElement = doc.body.firstChild;
+
+      if (itemElement) {
+        iconBox.innerHTML = "";
+        iconBox.appendChild(itemElement);
+      }
+    }
+  } else if (customBoxOverlay) {
+    if (nameBox) {
+      nameBox.innerHTML = "-- Select Object to edit --";
+    }
+    if (iconBox) {
+      iconBox.innerHTML = "?";
+    }
+
+    customBoxOverlay.classList.remove("hidden");
+    customBoxOverlay.classList.add("flex");
+  }
 };
