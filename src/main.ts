@@ -1,10 +1,15 @@
 import "./style.css";
 
 import {
+  clearScene,
   createObject,
   deleteSelectedObject,
-  selectMode
+  sceneObjects,
+  selectMode,
+  updateSceneObjects
 } from "./components/scene";
+import type { SceneData } from "./types/SceneTypes";
+import { downloadScene, openSceneFile } from "./utils/helpers";
 
 const objectListBox = document.getElementById(
   "object-list-box"
@@ -102,20 +107,62 @@ const handleKeydown = (event: KeyboardEvent) => {
       createObject(objectType as any);
     }
   }
-
-  // --- Optional: Add Transform Control switching here (like Blender's G, R, S) ---
-  // if (key.toLowerCase() === 'g') { transformControls.setMode('translate'); }
-  // if (key.toLowerCase() === 'r') { transformControls.setMode('rotate'); }
-  // if (key.toLowerCase() === 's') { transformControls.setMode('scale'); }
 };
 
 const initEventListeners = () => {
   window.addEventListener("keydown", handleKeydown);
 };
 
+export const exportSceneToJson = (): string => {
+  const exportedObjects = sceneObjects.map((obj) => {
+    const mesh = obj.mesh;
+
+    return {
+      id: obj.id,
+      type: obj.type,
+      name: obj.name,
+      mode: obj.mode,
+
+      position: {
+        x: mesh.position.x,
+        y: mesh.position.y,
+        z: mesh.position.z
+      },
+      rotation: {
+        x: mesh.rotation.x,
+        y: mesh.rotation.y,
+        z: mesh.rotation.z
+      },
+      scale: {
+        x: mesh.scale.x,
+        y: mesh.scale.y,
+        z: mesh.scale.z
+      }
+    };
+  });
+
+  const sceneData = {
+    objects: exportedObjects
+    // TODO add camera position, background color, etc.
+  };
+
+  return JSON.stringify(sceneData, null, 2);
+};
+
+export const importSceneFromJson = (jsonString: string) => {
+  try {
+    const sceneData: SceneData = JSON.parse(jsonString);
+    clearScene();
+    updateSceneObjects(sceneData.objects);
+  } catch (error) {
+    console.error("Something went wrong while reading json: ", error);
+  }
+};
+
 const initUiListeners = () => {
   const buttons = document.querySelectorAll(".add-object-btn");
   const modeBtns = document.querySelectorAll(".change-mode-btn");
+  const jsonBtns = document.querySelectorAll(".json-btn");
 
   objectListBtn.addEventListener("click", () => toggleObjectList());
 
@@ -131,7 +178,6 @@ const initUiListeners = () => {
     });
   });
 
-
   modeBtns.forEach((button) => {
     button.addEventListener("click", (event) => {
       const targetButton = event.currentTarget as HTMLButtonElement;
@@ -141,6 +187,23 @@ const initUiListeners = () => {
         selectMode(type as any);
       } else {
         console.error("no mode detected");
+      }
+    });
+  });
+
+  jsonBtns.forEach((button) => {
+    button.addEventListener("click", (event) => {
+      const targetButton = event.currentTarget as HTMLButtonElement;
+      const type = targetButton.dataset.type;
+
+      if (type) {
+        if (type === "export") {
+          downloadScene();
+        } else {
+          openSceneFile();
+        }
+      } else {
+        console.error("no action detected");
       }
     });
   });
