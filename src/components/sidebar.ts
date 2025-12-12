@@ -225,7 +225,7 @@ const setupInputListeners = () => {
   updateMeshProperty("scale", "z", inputs.scale.z);
 };
 
-let isSidebarOpen: boolean = true;
+let isSidebarOpen: boolean = window.innerWidth > 768 ? true : false;
 
 const toggleBtnClick = () => {
   const toggleBtn = document.getElementById(
@@ -235,6 +235,7 @@ const toggleBtnClick = () => {
   const sidebarIcon = document.getElementById("sidebar-icon") as HTMLElement;
 
   toggleBtn.addEventListener("click", () => {
+    sidebar.classList.remove("max-md:translate-x-[120%]");
     if (sidebar && toggleBtn && sidebarIcon) {
       if (isSidebarOpen) {
         sidebar.classList.remove("sidebar-flex");
@@ -250,11 +251,6 @@ const toggleBtnClick = () => {
         sidebarIcon.classList.remove("rotate-y-180");
 
         isSidebarOpen = true;
-      }
-
-      if (window.innerWidth < 768) {
-        sidebar.classList.remove("max-md:translate-x-[120%]");
-        sidebar.classList.add("max-md:translate-x-0");
       }
     }
   });
