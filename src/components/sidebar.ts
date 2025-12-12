@@ -1,23 +1,30 @@
 import type { SceneObject } from "../types/SceneTypes";
 import { getSvg } from "../utils/getSvg";
 
-const createListObjectHTML = (object: SceneObject) => {
-  const iconSvg = getSvg(object.type);
+const createListObjectHTML = (object: SceneObject, isSelected: boolean) => {
+  const iconSvg = getSvg(object.type, isSelected);
 
   return `
             <div
                 id="list-object-${object.id}"
-                class="group flex items-center gap-3 justify-between px-1 py-0.5 transition-all duration-300 hover:bg-n-600 rounded-sm"
+                class="group flex items-center gap-3 justify-between px-1 py-0.5 transition-all duration-300 ${
+                  isSelected ? "bg-n-600" : "hover:bg-n-600"
+                } rounded-sm"
               >
                 <button 
                     id="list-object-open-${object.id}"
                     data-object-id="${object.id}"
                     class="flex items-center gap-2 cursor-pointer"
+                    onclick="window.handleSelectObject('${object.id}')"
                 >
                   ${iconSvg}
 
                   <span
-                    class="text-n-100 text-sm transition-all duration-300 group-hover:text-accent-1"
+                    class=" text-sm transition-all duration-300 ${
+                      isSelected
+                        ? "text-accent-1"
+                        : "text-n-100 group-hover:text-accent-1"
+                    }"
                     >${object.name}</span
                   >
                 </button>
@@ -51,7 +58,10 @@ const createListObjectHTML = (object: SceneObject) => {
         `;
 };
 
-export const displayOpenObjects = (sceneObjects: SceneObject[]) => {
+export const displayOpenObjects = (
+  sceneObjects: SceneObject[],
+  selectedObj: SceneObject
+) => {
   const listBox = document.getElementById(
     "open-objects-list-box"
   ) as HTMLDivElement | null;
@@ -64,7 +74,8 @@ export const displayOpenObjects = (sceneObjects: SceneObject[]) => {
   const parser = new DOMParser();
 
   sceneObjects.forEach((object) => {
-    const htmlString = createListObjectHTML(object);
+    const isSelected = object.id === selectedObj.id;
+    const htmlString = createListObjectHTML(object, isSelected);
     const doc = parser.parseFromString(htmlString, "text/html");
     const itemElement = doc.body.firstChild;
 
@@ -72,4 +83,8 @@ export const displayOpenObjects = (sceneObjects: SceneObject[]) => {
       listBox.appendChild(itemElement);
     }
   });
+};
+
+export const displaySelectedOjbect = (object: SceneObject) => {
+  console.log(object);
 };

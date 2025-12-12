@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { displayOpenObjects } from "./sidebar";
+import { displayOpenObjects, displaySelectedOjbect } from "./sidebar";
 import { TransformControls } from "three/examples/jsm/Addons.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import type { ObjectType, SceneObject } from "../types/SceneTypes";
@@ -106,6 +106,22 @@ const animate = () => {
   renderer.render(scene, camera);
 };
 
+const findObjectById = (id: string): SceneObject | null => {
+  return sceneObjects.find((obj) => obj.id === id) || null;
+};
+
+const selectObject = (objectId: string) => {
+  const objectToSelect = findObjectById(objectId);
+
+  if (!objectToSelect) return;
+
+  selectedObject = objectToSelect;
+  transformControls.attach(selectedObject.mesh);
+
+  displaySelectedOjbect(selectedObject);
+  displayOpenObjects(sceneObjects, selectedObject);
+};
+
 const createDefaultMaterial = () => {
   return new THREE.MeshStandardMaterial({
     color: "#6b6c6e",
@@ -177,7 +193,8 @@ export const createObject = (type: ObjectType) => {
 
   transformControls.attach(selectedObject.mesh);
 
-  displayOpenObjects(sceneObjects);
+  displayOpenObjects(sceneObjects, selectedObject);
+  selectObject(newSceneObj.id);
 };
 
 const initApp = () => {
@@ -186,5 +203,6 @@ const initApp = () => {
 };
 
 if (canvas) {
+  (window as any).handleSelectObject = selectObject;
   initApp();
 }
