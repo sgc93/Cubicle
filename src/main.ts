@@ -1,7 +1,5 @@
 import "./style.css";
 
-import "./components/sidebar";
-import "./components/scene";
 import {
   createObject,
   deleteSelectedObject,

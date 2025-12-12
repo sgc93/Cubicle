@@ -1,5 +1,4 @@
 import * as THREE from "three";
-// Import the actual implementation functions
 import { displayOpenObjects, displaySelectedOjbect } from "./sidebar";
 import { TransformControls } from "three/examples/jsm/controls/TransformControls.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
@@ -8,7 +7,6 @@ import type {
   ObjectType,
   SceneObject
 } from "../types/SceneTypes";
-// import { colorModeBtns } from "../utils/getSvg";
 
 // --- DOM ---
 const viewport = document.getElementById("viewport") as HTMLDivElement;
@@ -36,6 +34,8 @@ let typeCounter: { [key: string]: number } = {};
 const INFINITE_GRID_SIZE = 2000;
 const CAMERA_FAR_PLANE = INFINITE_GRID_SIZE + 5000;
 
+export const updateBoundingBoxHelper = () => boundingBoxHelper?.update();
+
 const initScene = () => {
   // --- SCENE | CAMERA | RENDERE---
   scene = new THREE.Scene();
@@ -47,6 +47,7 @@ const initScene = () => {
     CAMERA_FAR_PLANE
   );
   camera.position.set(5, 5, 5);
+
   // --- RENDERER ---
 
   renderer = new THREE.WebGLRenderer({
@@ -55,13 +56,15 @@ const initScene = () => {
   renderer.setSize(viewport.clientWidth, viewport.clientHeight);
   viewport.appendChild(renderer.domElement);
   renderer.shadowMap.enabled = true;
-  renderer.domElement.addEventListener("pointerdown", onPointerClick, false); // CHANGED: pointerdown is usually better for interactivity
+  renderer.domElement.addEventListener("pointerdown", onPointerClick, false);
+
   // --- CONTROLS ---
 
   controls = new OrbitControls(camera, renderer.domElement);
   controls.listenToKeyEvents(window);
   controls.enableDamping = true;
   controls.dampingFactor = 0.05;
+
   // --- HELPERS: GRID, AXES ---
 
   const grid = new THREE.GridHelper(
@@ -85,22 +88,23 @@ const initScene = () => {
 
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2();
+
   // --- TRANSFORM CONTROLS (Object Manipulation) ---
-  transformControls = new TransformControls(camera, renderer.domElement); // FIX 2: Added event listener to update selection helpers on transform change
+  transformControls = new TransformControls(camera, renderer.domElement); // FIXME Added event listener to update selection helpers on transform change
   transformControls.addEventListener("change", () => {
     if (selectedObject) {
       if (boundingBoxHelper) boundingBoxHelper.update();
       displaySelectedOjbect(selectedObject);
     }
     renderer.render(scene, camera);
-  }); // FIX 3: Added logic to update selection helpers and sidebar when transform is complete
+  });
 
   transformControls.addEventListener("objectChange", () => {
     if (selectedObject) {
-      if (boundingBoxHelper) boundingBoxHelper.update(); // Ensure the object's properties are logged after manipulation
+      if (boundingBoxHelper) boundingBoxHelper.update();
       displaySelectedOjbect(selectedObject);
     }
-  }); // This correctly disables orbit controls while dragging
+  });
   transformControls.addEventListener("dragging-changed", function (event) {
     controls.enabled = !event.value;
   });
@@ -108,6 +112,7 @@ const initScene = () => {
   scene.add(transformControls as unknown as THREE.Object3D);
 
   renderer.render(scene, camera);
+
   // --- RESIZE HANDLER ---
 
   window.addEventListener("resize", () => {
@@ -130,7 +135,6 @@ const animate = () => {
 };
 
 function onPointerClick(event: PointerEvent) {
-  // Check if the TransformControls is currently active (e.g., rotating, dragging)
   if (transformControls.dragging) {
     return;
   }
@@ -141,13 +145,10 @@ function onPointerClick(event: PointerEvent) {
 
   raycaster.setFromCamera(mouse, camera);
 
-  // FIX 4: Only check the actual meshes for intersection.
-  // Filter out all scene-level helpers/lights/controls.
   const meshes = sceneObjects.map((obj) => obj.mesh);
   const intersects = raycaster.intersectObjects(meshes, false);
 
   if (intersects.length > 0) {
-    // Find the object from your sceneObjects array using the mesh reference
     const intersectedMesh = intersects[0].object as THREE.Mesh;
     const sceneObject = sceneObjects.find(
       (obj) => obj.mesh === intersectedMesh
@@ -158,11 +159,10 @@ function onPointerClick(event: PointerEvent) {
       console.log(sceneObject.name);
       return;
     } else {
-      selectObject('lfjdf')
+      selectObject("lfjdf");
     }
   }
 
-  // Deselect if no objects were intersected or a non-mesh object was hit.
   selectObject("");
 }
 
@@ -173,13 +173,11 @@ const updateSelectionHelpers = (object: SceneObject | null) => {
   if (object) {
     const mesh = object.mesh;
 
-    // Add the bounding box helper
     boundingBoxHelper = new THREE.BoxHelper(mesh, "#f77f00");
-    scene.add(boundingBoxHelper); // Attach the TransformControls to the selected mesh
+    scene.add(boundingBoxHelper);
 
     transformControls.attach(object.mesh);
   } else {
-    // If no object is selected, detach the transform controls
     transformControls.detach();
   }
 };
@@ -219,7 +217,7 @@ const findObjectById = (id: string): SceneObject | null => {
 };
 
 const selectObject = (objectId: string) => {
-  const objectToSelect = findObjectById(objectId); // Logic for deselecting an object
+  const objectToSelect = findObjectById(objectId);
 
   if (!objectToSelect) {
     if (selectedObject) {
@@ -243,7 +241,6 @@ const selectObject = (objectId: string) => {
   displayOpenObjects(sceneObjects, selectedObject);
 };
 
-// Add this function near your selectObject function
 export const deleteObject = (id: string) => {
   const objeTobeDelteted = findObjectById(id);
 
@@ -357,7 +354,7 @@ export const createObject = (type: ObjectType) => {
   };
 
   sceneObjects.push(newSceneObj);
-  selectedObject = newSceneObj; // The selection will now automatically handle attaching controls/updating sidebar
+  selectedObject = newSceneObj;
 
   selectObject(newSceneObj.id);
 };
