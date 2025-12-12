@@ -1,4 +1,3 @@
-
 let notifBox: HTMLDivElement | null = null;
 let notifMsgBox: HTMLSpanElement | null = null;
 
@@ -9,16 +8,14 @@ export const addNotification = (msg: string) => {
     notifBox.classList.remove("notif-hidden");
     notifBox.classList.add("notif-shown");
 
-    const timeoutId = setTimeout(() => {
+    setTimeout(() => {
       if (notifBox && notifMsgBox) {
         notifMsgBox.innerHTML = "";
 
         notifBox.classList.remove("notif-shown");
         notifBox.classList.add("notif-hidden");
       }
-    }, 4000);
-
-    () => clearTimeout(timeoutId);
+    }, 3000);
   }
 };
 
