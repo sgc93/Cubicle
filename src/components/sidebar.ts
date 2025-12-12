@@ -1,5 +1,8 @@
-import type { ObjectModeType, SceneObject } from "../types/SceneTypes";
+import { radToDeg } from "three/src/math/MathUtils.js";
+import type { SceneObject } from "../types/SceneTypes";
 import { getSvg } from "../utils/getSvg";
+import { selectedObject, updateBoundingBoxHelper } from "./scene";
+import { degToRad } from "../utils/helpers";
 
 const createListObjectHTML = (object: SceneObject, isSelected: boolean) => {
   const iconSvg = getSvg(object.type, isSelected);
@@ -101,6 +104,12 @@ export const displayOpenObjects = (
   }
 };
 
+const inputs = {
+  translate: { x: "translate-x", y: "translate-y", z: "translate-z" },
+  rotate: { x: "rotate-x", y: "rotate-y", z: "rotate-z" },
+  scale: { x: "scale-x", y: "scale-y", z: "scale-z" }
+};
+
 export const displaySelectedOjbect = (object: SceneObject | null) => {
   const nameBox = document.getElementById(
     "selected-object-name"
@@ -135,6 +144,29 @@ export const displaySelectedOjbect = (object: SceneObject | null) => {
         iconBox.appendChild(itemElement);
       }
     }
+
+    const mesh = object.mesh;
+
+    (document.getElementById(inputs.translate.x) as HTMLInputElement).value =
+      mesh.position.x.toFixed(2);
+    (document.getElementById(inputs.translate.y) as HTMLInputElement).value =
+      mesh.position.y.toFixed(2);
+    (document.getElementById(inputs.translate.z) as HTMLInputElement).value =
+      mesh.position.z.toFixed(2);
+
+    (document.getElementById(inputs.rotate.x) as HTMLInputElement).value =
+      radToDeg(mesh.rotation.x).toFixed(2);
+    (document.getElementById(inputs.rotate.y) as HTMLInputElement).value =
+      radToDeg(mesh.rotation.y).toFixed(2);
+    (document.getElementById(inputs.rotate.z) as HTMLInputElement).value =
+      radToDeg(mesh.rotation.z).toFixed(2);
+
+    (document.getElementById(inputs.scale.x) as HTMLInputElement).value =
+      mesh.scale.x.toFixed(2);
+    (document.getElementById(inputs.scale.y) as HTMLInputElement).value =
+      mesh.scale.y.toFixed(2);
+    (document.getElementById(inputs.scale.z) as HTMLInputElement).value =
+      mesh.scale.z.toFixed(2);
   } else if (customBoxOverlay) {
     if (nameBox) {
       nameBox.innerHTML = "-- Select Object to edit --";
@@ -147,3 +179,50 @@ export const displaySelectedOjbect = (object: SceneObject | null) => {
     customBoxOverlay.classList.add("flex");
   }
 };
+
+const setupInputListeners = () => {
+  if (!document.getElementById(inputs.translate.x)) {
+    return;
+  }
+
+  const updateMeshProperty = (
+    property: "position" | "rotation" | "scale",
+    axis: "x" | "y" | "z",
+    elementId: string,
+    isAngle = false
+  ) => {
+    const inputElement = document.getElementById(elementId) as HTMLInputElement;
+
+    inputElement.addEventListener("keydown", (e) => {
+      e.stopPropagation();
+    });
+
+    inputElement?.addEventListener("change", () => {
+      if (!selectedObject) return;
+
+      let newValue = parseFloat(inputElement.value);
+      if (isNaN(newValue)) return;
+
+      if (isAngle) {
+        newValue = degToRad(newValue);
+      }
+
+      selectedObject.mesh[property][axis] = newValue;
+      updateBoundingBoxHelper();
+    });
+  };
+
+  updateMeshProperty("position", "x", inputs.translate.x);
+  updateMeshProperty("position", "y", inputs.translate.y);
+  updateMeshProperty("position", "z", inputs.translate.z);
+
+  updateMeshProperty("rotation", "x", inputs.rotate.x, true);
+  updateMeshProperty("rotation", "y", inputs.rotate.y, true);
+  updateMeshProperty("rotation", "z", inputs.rotate.z, true);
+
+  updateMeshProperty("scale", "x", inputs.scale.x);
+  updateMeshProperty("scale", "y", inputs.scale.y);
+  updateMeshProperty("scale", "z", inputs.scale.z);
+};
+
+setupInputListeners();
