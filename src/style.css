@@ -78,3 +78,13 @@ body {
     transform: translateX(100%);
   }
 }
+
+.notif-hidden {
+  top: -54px;
+  opacity: 0;
+}
+
+.notif-shown {
+  top: 54px;
+  opacity: 1;
+}
