@@ -27,9 +27,8 @@ body {
   padding: 0;
 }
 
-
 /* scroll bar */
-.cubic-scroll{
+.cubic-scroll {
   overflow-y: scroll;
   overflow-x: hidden;
 }
@@ -44,19 +43,19 @@ body {
   background-color: var(--color-n-600);
 }
 
-
 .selected {
   background-color: var(--color-accent-1);
 }
 
 #sidebar {
   width: 320px;
+  display: flex;
 }
 
 .sidebar-hidden {
   width: 0;
   opacity: 0;
-  transform: translateX( 100%);
+  transform: translateX(100%);
 }
 .sidebar-flex {
   width: 320px;
@@ -69,5 +68,13 @@ body {
     width: 320px;
     opacity: 100;
     transform: translateX(0);
+  }
+}
+
+@media (max-width: 768px) {
+  #sidebar {
+    width: 0;
+    opacity: 0;
+    transform: translateX(100%);
   }
 }
