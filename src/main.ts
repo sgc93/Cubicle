@@ -2,7 +2,11 @@ import "./style.css";
 
 import "./components/sidebar";
 import "./components/scene";
-import { createObject } from "./components/scene";
+import {
+  createObject,
+  deleteSelectedObject,
+  selectMode
+} from "./components/scene";
 
 const objectListBox = document.getElementById(
   "object-list-box"
@@ -42,7 +46,23 @@ const handleKeydown = (event: KeyboardEvent) => {
     toggleObjectList();
   } else if (isObjectListBoxOpen && key === "Escape") {
     toggleObjectList();
+  } else if (["g", "r", "s"].includes(key.toLowerCase())) {
+    switch (key.toLowerCase()) {
+      case "g":
+        selectMode("translate");
+        break;
+      case "r":
+        selectMode("rotate");
+        break;
+      case "s":
+        selectMode("scale");
+        break;
+    }
+  } else if (key === "Backspace") {
+    deleteSelectedObject();
   }
+
+  console.log(key);
 
   if (isShiftAPressed) {
     let objectType: string | null = null;
