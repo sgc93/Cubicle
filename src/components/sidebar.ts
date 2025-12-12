@@ -33,6 +33,7 @@ const createListObjectHTML = (object: SceneObject, isSelected: boolean) => {
                     id="list-object-delete-${object.id}"
                     data-object-id="${object.id}"
                   class="group cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10 opacity-0 group-hover:opacity-100"
+                  onclick="window.deleteObject('${object.id}')"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -60,7 +61,7 @@ const createListObjectHTML = (object: SceneObject, isSelected: boolean) => {
 
 export const displayOpenObjects = (
   sceneObjects: SceneObject[],
-  selectedObj: SceneObject
+  selectedObj: SceneObject | null
 ) => {
   const listBox = document.getElementById(
     "open-objects-list-box"
@@ -73,18 +74,33 @@ export const displayOpenObjects = (
   listBox.innerHTML = "";
   const parser = new DOMParser();
 
-  sceneObjects.forEach((object) => {
-    const isSelected = object.id === selectedObj.id;
-    const htmlString = createListObjectHTML(object, isSelected);
-    const doc = parser.parseFromString(htmlString, "text/html");
+  if (sceneObjects.length > 0) {
+    sceneObjects.forEach((object) => {
+      const isSelected = selectedObj ? object.id === selectedObj.id : false;
+      const htmlString = createListObjectHTML(object, isSelected);
+      const doc = parser.parseFromString(htmlString, "text/html");
+      const itemElement = doc.body.firstChild;
+
+      if (itemElement) {
+        listBox.appendChild(itemElement);
+      }
+    });
+  } else {
+    const doc = parser.parseFromString(
+      `<div class="flex flex-col gap-0.5 items-center text-center">
+          <span class="text-sm text-n-100">No object is selected!</span>
+          <span class="text-xs text-n-300">Use shortcuts or press A to add shapes.</span>
+        </div>`,
+      "text/html"
+    );
     const itemElement = doc.body.firstChild;
 
     if (itemElement) {
       listBox.appendChild(itemElement);
     }
-  });
+  }
 };
 
-export const displaySelectedOjbect = (object: SceneObject) => {
+export const displaySelectedOjbect = (object: SceneObject | null) => {
   console.log(object);
 };
