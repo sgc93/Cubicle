@@ -48,3 +48,26 @@ body {
 .selected {
   background-color: var(--color-accent-1);
 }
+
+#sidebar {
+  width: 320px;
+}
+
+.sidebar-hidden {
+  width: 0;
+  opacity: 0;
+  transform: translateX( 100%);
+}
+.sidebar-flex {
+  width: 320px;
+  opacity: 100;
+  transform: translateX(0);
+}
+
+@media (min-width: 768px) {
+  .sidebar-hidden {
+    width: 320px;
+    opacity: 100;
+    transform: translateX(0);
+  }
+}
