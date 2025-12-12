@@ -19,3 +19,17 @@ export type SceneObject = {
   mesh: THREE.Mesh;
   mode: ObjectModeType;
 };
+
+export type ExportedObject = {
+  id: string;
+  type: ObjectType;
+  name: string;
+  mode: ObjectModeType;
+  position: { x: number; y: number; z: number };
+  rotation: { x: number; y: number; z: number };
+  scale: { x: number; y: number; z: number };
+};
+
+export type SceneData = {
+  objects: ExportedObject[];
+};
