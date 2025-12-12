@@ -1,6 +1,6 @@
-import { handleSidebar } from "./components/sidebar";
 import "./style.css";
 
+import "./components/sidebar";
 import "./components/scene";
 import { createObject } from "./components/scene";
 
@@ -33,8 +33,6 @@ const toggleObjectList = () => {
 
 const handleKeydown = (event: KeyboardEvent) => {
   const { key, shiftKey } = event;
-
-  console.log(key);
 
   if (shiftKey && (key === "a" || key === "A")) {
     event.preventDefault();
@@ -119,5 +117,3 @@ initEventListeners();
 document.addEventListener("DOMContentLoaded", () => {
   initUiListeners();
 });
-
-handleSidebar("Sidebar is handled");
