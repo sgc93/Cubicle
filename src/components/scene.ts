@@ -9,11 +9,12 @@ import type {
   ObjectType,
   SceneObject
 } from "../types/SceneTypes";
+import { addNotification } from "./notification";
 
 // --- DOM ---
 const viewport = document.getElementById("viewport") as HTMLDivElement;
 if (!viewport) {
-  console.error("Viewport element not found!");
+  addNotification("Viewport element not found, refresh page!");
 }
 
 // --- CORE GLOBALS ---
@@ -240,7 +241,6 @@ function onPointerClick(event: PointerEvent) {
 
     if (sceneObject) {
       selectObject(sceneObject.id);
-      console.log(sceneObject.name);
       return;
     } else {
       selectObject("lfjdf");
@@ -276,11 +276,9 @@ export const colorModeBtns = (mode: ObjectModeType) => {
     if (type === mode) {
       button.classList.remove("bg-n-300/70", "hover:bg-accent-1");
       button.classList.add("bg-accent-1");
-      console.log(button.classList);
     } else {
       button.classList.remove("bg-accent-1");
       button.classList.add("bg-n-300/70", "hover:bg-accent-1");
-      console.log(button.classList);
     }
   });
 };
@@ -292,7 +290,7 @@ export const selectMode = (mode: ObjectModeType) => {
     colorModeBtns(mode);
   } else {
     transformControls.detach();
-    console.error("There is no selected object");
+    addNotification("No selected object, Just click on the object!");
   }
 };
 
@@ -356,9 +354,9 @@ export const deleteObject = (id: string) => {
     displaySelectedOjbect(selectedObject);
     displayOpenObjects(sceneObjects, selectedObject);
 
-    console.log(`Deleted object: ${deletedObjectName}`);
+    addNotification(`${deletedObjectName} is deleted!`)
   } else {
-    console.log("object not find to delete");
+    console.warn("object not find to delete");
   }
 };
 

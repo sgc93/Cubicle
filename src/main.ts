@@ -10,6 +10,7 @@ import {
 } from "./components/scene";
 import type { SceneData } from "./types/SceneTypes";
 import { downloadScene, openSceneFile } from "./utils/helpers";
+import { addNotification } from "./components/notification";
 
 const objectListBox = document.getElementById(
   "object-list-box"
@@ -64,8 +65,6 @@ const handleKeydown = (event: KeyboardEvent) => {
   } else if (key === "Backspace") {
     deleteSelectedObject();
   }
-
-  console.log(key);
 
   if (isShiftAPressed) {
     let objectType: string | null = null;
@@ -155,7 +154,7 @@ export const importSceneFromJson = (jsonString: string) => {
     clearScene();
     updateSceneObjects(sceneData.objects);
   } catch (error) {
-    console.error("Something went wrong while reading json: ", error);
+    addNotification("Unable to load imported JSON, try again!");
   }
 };
 
@@ -185,8 +184,6 @@ const initUiListeners = () => {
 
       if (type) {
         selectMode(type as any);
-      } else {
-        console.error("no mode detected");
       }
     });
   });
@@ -202,8 +199,6 @@ const initUiListeners = () => {
         } else {
           openSceneFile();
         }
-      } else {
-        console.error("no action detected");
       }
     });
   });
