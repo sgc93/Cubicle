@@ -4,6 +4,7 @@ import {
   clearScene,
   createObject,
   deleteSelectedObject,
+  duplicateObject,
   sceneObjects,
   selectMode,
   updateSceneObjects
@@ -46,6 +47,8 @@ const handleKeydown = (event: KeyboardEvent) => {
     event.preventDefault();
     isShiftAPressed = true;
     return;
+  } else if (shiftKey && key.toLowerCase() === "d") {
+    duplicateObject();
   } else if (key.toLowerCase() === "a") {
     toggleObjectList();
   } else if (isObjectListBoxOpen && key === "Escape") {

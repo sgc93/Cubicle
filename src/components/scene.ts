@@ -374,6 +374,38 @@ const createDefaultMaterial = () => {
   });
 };
 
+
+export const duplicateObject = () => {
+  if (selectedObject) {
+    let newObj: SceneObject;
+
+    let currCount = typeCounter[selectedObject.type] || 0;
+    currCount++;
+    typeCounter[selectedObject.type] = currCount;
+
+    newObj = {
+      type: selectedObject.type,
+      name: `${selectedObject.name} - copy`,
+      mesh: selectedObject.mesh.clone(),
+      id: `obj_${selectedObject.type}_${new Date()}_${currCount}`,
+      mode: "translate"
+    };
+
+    const originalName = selectedObject.name;
+
+    sceneObjects.push(newObj);
+    selectedObject = newObj;
+
+    scene.add(selectedObject.mesh);
+
+    displayOpenObjects(sceneObjects, selectedObject);
+    displaySelectedOjbect(selectedObject);
+    addNotification(`${originalName} is duplicated!`);
+  } else {
+    addNotification("Select object to duplicate it!");
+  }
+};
+
 export const createObject = (type: ObjectType) => {
   let geometry: THREE.BufferGeometry;
   let newMesh: THREE.Mesh;
@@ -447,6 +479,7 @@ const initApp = () => {
 };
 
 if (viewport) {
+  (window as any).duplicateObject = duplicateObject;
   (window as any).handleSelectObject = selectObject;
   (window as any).deleteObject = deleteObject;
   initApp();
