@@ -18,12 +18,14 @@ export type SceneObject = {
   name: string;
   mesh: THREE.Mesh;
   mode: ObjectModeType;
+  text?: string;
 };
 
 export type ExportedObject = {
   id: string;
   type: ObjectType;
   name: string;
+  text?: string;
   mode: ObjectModeType;
   position: { x: number; y: number; z: number };
   rotation: { x: number; y: number; z: number };
