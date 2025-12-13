@@ -9,7 +9,8 @@ import type {
   ObjectType,
   SceneObject
 } from "../types/SceneTypes";
-import { addNotification } from "./notification";
+import { addNotification, removeNotification } from "./notification";
+import { Font, FontLoader, TextGeometry } from "three/examples/jsm/Addons.js";
 
 // --- DOM ---
 const viewport = document.getElementById("viewport") as HTMLDivElement;
@@ -26,6 +27,10 @@ let renderer: THREE.WebGLRenderer;
 let controls: OrbitControls;
 let transformControls: TransformControls;
 let boundingBoxHelper: THREE.BoxHelper | null = null;
+
+let font: Font | null = null;
+let fontPath: string = "/fonts/font-inter.json";
+let text: string = "Cubicle";
 
 // --- OBJECTS ---
 export let sceneObjects: SceneObject[] = [];
@@ -119,6 +124,25 @@ const initScene = () => {
 
   renderer.render(scene, camera);
 
+  // --- FONT ---
+  const fontLoader = new FontLoader();
+
+  fontLoader.load(
+    fontPath,
+    (loadFont) => {
+      font = loadFont;
+      removeNotification();
+      addNotification("Font loaded, Add texts too👍");
+    },
+    (xhr) => {
+      addNotification("Loading " + (xhr.loaded / xhr.total) * 100 + "%", false);
+    },
+    (error) => {
+      console.error("Error loading Three.js font", error);
+      addNotification("Failed to load font!");
+    }
+  );
+
   // --- RESIZE HANDLER ---
 
   window.addEventListener("resize", () => {
@@ -165,7 +189,7 @@ export const updateSceneObjects = (objects: ExportedObject[]) => {
       case "torus":
         geometry = new THREE.TorusGeometry(2, 0.5, 16, 100);
         break;
-      case "text": // FIXEME handle displaying text
+      case "text": // FIXME handle displaying text
         geometry = new THREE.BoxGeometry(2, 2, 0.2);
         break;
       default:
@@ -354,7 +378,7 @@ export const deleteObject = (id: string) => {
     displaySelectedOjbect(selectedObject);
     displayOpenObjects(sceneObjects, selectedObject);
 
-    addNotification(`${deletedObjectName} is deleted!`)
+    addNotification(`${deletedObjectName} is deleted!`);
   } else {
     console.warn("object not find to delete");
   }
@@ -364,7 +388,7 @@ export const deleteSelectedObject = () => {
   if (selectedObject) {
     deleteObject(selectedObject.id);
   } else {
-    addNotification('Select object to delete!')
+    addNotification("Select object to delete!");
   }
 };
 
@@ -375,7 +399,6 @@ const createDefaultMaterial = () => {
     metalness: 0.1
   });
 };
-
 
 export const duplicateObject = () => {
   if (selectedObject) {
@@ -432,8 +455,17 @@ export const createObject = (type: ObjectType) => {
     case "torus":
       geometry = new THREE.TorusGeometry(2, 0.5, 16, 100);
       break;
-    case "text": // FIXEME handle displaying text
-      geometry = new THREE.BoxGeometry(2, 2, 0.2);
+    case "text":
+      if (!font) {
+        addNotification("Font not loaded yet, try again!");
+        return;
+      }
+
+      geometry = new TextGeometry(text, {
+        font,
+        size: 1.5,
+        depth: 0.5
+      });
       break;
     default:
       return;
@@ -447,6 +479,9 @@ export const createObject = (type: ObjectType) => {
   }
   if (type === "torus") {
     newMesh.rotation.x = Math.PI / 2;
+  }
+  if (type === "text") {
+    newMesh.translateX(-2.5);
   }
 
   let currCount = typeCounter[type] || 0;
