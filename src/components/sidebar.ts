@@ -35,7 +35,7 @@ const createListObjectHTML = (object: SceneObject, isSelected: boolean) => {
                 <button
                     id="list-object-delete-${object.id}"
                     data-object-id="${object.id}"
-                  class="group cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10 opacity-0 group-hover:opacity-100"
+                  class="group cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10 min-[500px]:opacity-0 min-[500px]:group-hover:opacity-100"
                   onclick="window.deleteObject('${object.id}')"
                 >
                   <svg
