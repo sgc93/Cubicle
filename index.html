@@ -15,6 +15,8 @@
       id="app"
       class="relative flex flex-col w-screen h-screen overflow-hidden"
     >
+      <!-- Header -->
+
       <div
         class="flex bg-n-800 h-12 px-3 py-2 border-b border-n-300 text-accent-1"
       >
@@ -23,7 +25,7 @@
           <div class="grow flex items-center gap-3 px-5"></div>
           <button
             id="toggle-sidebar-btn"
-            class="md:hidden relative flex items-center justify-center cursor-pointer p-1 rounded-md transition-all duration-300 bg-accent-1/80 "
+            class="md:hidden relative flex items-center justify-center cursor-pointer p-1 rounded-md transition-all duration-300 bg-accent-1/80"
           >
             <svg
               id="sidebar-icon"
@@ -42,6 +44,9 @@
           </button>
         </div>
       </div>
+
+      <!-- Main Viewport -->
+
       <div class="flex-1 flex h-[94dvh]">
         <div id="viewport" class="flex-1 min-w-0 w-full h-full bg-n-600"></div>
         <div
@@ -477,10 +482,13 @@
             </div>
           </button>
         </div>
+
         <div
           id="sidebar"
           class="max-md:fixed max-md:top-13 max-md:right-1 max-md:z-40 h-[80dvh] md:max-h-full md:h-full flex flex-col gap-1.5 bg-n-900 max-md:rounded-sm md:bg-n-600/60 p-1.5 overflow-hidden transition-all duration-500 max-md:translate-x-[120%]"
         >
+          <!-- Object List -->
+
           <div
             class="min-h-1/4 max-h-1/3 bg-n-800 rounded-md rounded-b-none flex flex-col gap-2 py-1.5 cubic-scroll"
           >
@@ -568,6 +576,9 @@
               </div>
             </div>
           </div>
+
+          <!-- Selected Object Editor-->
+
           <div
             class="min-h-2/3 max-h-3/4 flex-1 bg-n-800 rounded-md rounded-t-none flex flex-col gap-2 py-1.5 cubic-scroll"
           >
@@ -575,9 +586,88 @@
               class="flex items-center gap-1.5 bg-n-700 px-2 py-1 cursor-pointer"
             >
               <div id="selected-object-svg"></div>
-              <span id="selected-object-name" class="text-n-100"
+              <span
+                id="selected-object-name"
+                class="text-n-100 line-clamp-1 text-ellipsis max-w-44 text-start"
                 >Torus (01)</span
               >
+              <div class="flex items-center gap-1 grow justify-end">
+                <div class="relative group flex items-center justify-center">
+                  <button
+                    class="cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10"
+                    onclick="window.duplicateObject()"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="w-3.5 h-3.5 stroke-accent-1 transition-all duration-300"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path
+                        d="M7 7m0 2.667a2.667 2.667 0 0 1 2.667 -2.667h8.666a2.667 2.667 0 0 1 2.667 2.667v8.666a2.667 2.667 0 0 1 -2.667 2.667h-8.666a2.667 2.667 0 0 1 -2.667 -2.667z"
+                      />
+                      <path
+                        d="M4.012 16.737a2.005 2.005 0 0 1 -1.012 -1.737v-10c0 -1.1 .9 -2 2 -2h10c.75 0 1.158 .385 1.5 1"
+                      />
+                    </svg>
+                  </button>
+                  <div
+                    class="absolute -bottom-[250%] -right-1.5 z-10 w-max flex items-center justify-center gap-2 px-2 py-0.5 rounded-md bg-n-700 shadow-md shadow-n-900 border border-n-900 transition-all duration-300 translate-y-1 scale-0 opacity-0 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 origin-bottom"
+                  >
+                    <div
+                      class="absolute -top-1.5 right-2 -z-20 w-3 h-3 bg-n-700 rotate-45"
+                    ></div>
+                    <span class="text-xs font-semibold tracking-wider"
+                      >Duplicate</span
+                    ><span class="text-[12px] tracking-tight">Shift + D</span>
+                  </div>
+                </div>
+                <div class="relative group flex items-center justify-center">
+                  <button
+                    class="cursor-pointer p-0.5 transition-all duration-300 hover:bg-accent-1/10"
+                    onclick="window.deleteSelectedObject()"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="24"
+                      height="24"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="w-3.5 h-3.5 stroke-accent-1 transition-all duration-300"
+                    >
+                      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                      <path d="M4 7l16 0" />
+                      <path d="M10 11l0 6" />
+                      <path d="M14 11l0 6" />
+                      <path
+                        d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12"
+                      />
+                      <path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" />
+                    </svg>
+                  </button>
+                  <div
+                    class="absolute -bottom-[250%] -right-1 z-10 w-max flex items-center justify-center gap-2 px-2 py-0.5 rounded-md bg-n-700 shadow-md shadow-n-900 border border-n-900 transition-all duration-300 translate-y-1 scale-0 opacity-0 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100 origin-bottom"
+                  >
+                    <div
+                      class="absolute -top-1.5 right-2 -z-20 w-3 h-3 bg-n-700 rotate-45"
+                    ></div>
+                    <span class="text-xs font-semibold tracking-wider"
+                      >Delete</span
+                    ><span class="text-[12px] tracking-tight">Backspace</span>
+                  </div>
+                </div>
+              </div>
             </div>
             <div
               class="flex flex-col gap-1.5 ml-5 pl-2 pr-2 border-l border-n-400/60"
@@ -809,6 +899,9 @@
         </div>
       </div>
 
+      <!-- Global Components -->
+
+      <!-- Notification -->
       <div
         id="notif-box"
         class="notif-hidden fixed left-1/2 -translate-x-1/2 flex items-start gap-3 bg-n-900 p-3 rounded-md w-max max-w-[340px] text-center text-wrap transition-all duration-300"
