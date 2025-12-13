@@ -363,6 +363,8 @@ export const deleteObject = (id: string) => {
 export const deleteSelectedObject = () => {
   if (selectedObject) {
     deleteObject(selectedObject.id);
+  } else {
+    addNotification('Select object to delete!')
   }
 };
 
@@ -482,5 +484,6 @@ if (viewport) {
   (window as any).duplicateObject = duplicateObject;
   (window as any).handleSelectObject = selectObject;
   (window as any).deleteObject = deleteObject;
+  (window as any).deleteSelectedObject = deleteSelectedObject;
   initApp();
 }
